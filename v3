@@ -1,0 +1,1417 @@
+<!DOCTYPE html> <!-- Declara el tipo de documento como HTML5 -->
+<html lang="es"> <!-- Etiqueta raíz del documento, idioma español -->
+<head> <!-- Inicio de la cabecera (configuraciones invisibles) -->
+    <meta charset="UTF-8"> <!-- Codificación UTF-8 para tildes y ñ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Adapta la web a móviles -->
+    <title>Villa de Guaduas - Sistema Completo V6</title> <!-- Título de la pestaña -->
+    
+    <!-- Fuente externa 'Inter' de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style> 
+        /* =========================================================
+           ZONA 1: VARIABLES GLOBALES DE COLORES (PALETA)
+           ========================================================= */
+        :root { /* Selector de nivel raíz, aquí se guardan las variables CSS */
+            --fondo-oscuro: #21110a;              /* Color café oscuro de fondo base */
+            --dorado: #e5a963;                    /* Dorado principal de acentos */
+            --panel-bg: rgba(26, 17, 12, 0.92);   /* Fondo semitransparente de paneles */
+            --borde-panel: rgba(255, 255, 255, 0.12); /* Gris claro para bordes sutiles */
+            --texto-blanco: #ffffff;              /* Blanco puro para títulos */
+            --texto-gris: #b8a69a;                /* Gris cálido para textos secundarios */
+            --hover-boton: rgba(229, 169, 99, 0.2); /* Dorado transparente para hover */
+            --color-admin: #e5a963;               /* Color rol Administrador (dorado) */
+            --color-almacen: #9333ea;             /* Color rol Almacén (morado) */
+            --color-prod: #ec4899;                /* Color rol Producción (fucsia) */
+            --color-prov: #10b981;                /* Color rol Proveedor / éxito (verde) */
+            --color-rojo: #f43f5e;                /* Rojo coral para alertas críticas */
+            --color-amarillo: #f59e0b;            /* Amarillo ámbar para avisos medios */
+        } 
+
+        /* =========================================================
+           ZONA 2: RESET GLOBAL
+           ========================================================= */
+        * {                                       /* Aplica a TODOS los elementos */
+            margin: 0;                            /* Quita margen por defecto */
+            padding: 0;                           /* Quita padding por defecto */
+            box-sizing: border-box;               /* Incluye border en el width/height */
+            font-family: 'Inter', sans-serif;     /* Aplica la fuente Inter a todo */
+        } 
+
+        body {                                    /* Estilos generales del cuerpo */
+            background-color: var(--fondo-oscuro); /* Fondo café oscuro base */
+            background-image: radial-gradient(circle at 50% 10%, #4a2818 0%, #170a04 100%); /* Gradiente radial decorativo */
+            color: var(--texto-blanco);           /* Texto blanco por defecto */
+            height: 100vh;                        /* Ocupa el 100% de la ventana */
+            display: flex;                        /* Usa flexbox para el layout */
+            flex-direction: column;               /* Dirección vertical (barra arriba, contenido abajo) */
+            overflow: hidden;                     /* Oculta scroll del body (lo maneja el contenedor interno) */
+        } 
+
+        /* =========================================================
+           ZONA 3: SCROLLBARS PERSONALIZADOS (webkit)
+           ========================================================= */
+        ::-webkit-scrollbar { width: 8px; height: 8px; } /* Ancho del scroll vertical y horizontal */
+        ::-webkit-scrollbar-track { background: var(--fondo-oscuro); border-radius: 10px; } /* Fondo del riel */
+        ::-webkit-scrollbar-thumb { background: rgba(229, 169, 99, 0.3); border-radius: 10px; } /* Pulgar dorado semiopaco */
+        ::-webkit-scrollbar-thumb:hover { background: var(--dorado); } /* Al pasar el mouse, dorado pleno */
+
+        /* =========================================================
+           ZONA 4: BARRA SUPERIOR DE NAVEGACIÓN
+           ========================================================= */
+        .barra-superior {                         /* Contenedor principal de la barra */
+            width: 100%;                          /* Ocupa todo el ancho */
+            background: var(--panel-bg);          /* Fondo semitransparente */
+            border-bottom: 1px solid var(--borde-panel); /* Línea divisoria inferior */
+            padding: 12px 30px;                   /* Espacio interno */
+            display: flex;                        /* Flexbox para distribuir hijos */
+            justify-content: space-between;       /* Separa izquierda/derecha */
+            align-items: center;                  /* Centra verticalmente */
+            z-index: 100;                         /* Capa superior */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); /* Sombra inferior */
+        } 
+        
+        .btn-menu-abrir {                         /* Botón ☰ Menú */
+            background: rgba(255,255,255,0.06);   /* Fondo blanco translúcido */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            color: var(--dorado);                 /* Texto dorado */
+            padding: 8px 16px;                    /* Espacio interno */
+            border-radius: 8px;                   /* Esquinas redondeadas */
+            cursor: pointer;                      /* Cursor tipo mano */
+            font-weight: bold;                    /* Texto en negrita */
+            font-size: 12px;                      /* Tamaño pequeño */
+            margin-right: 15px;                   /* Separación derecha */
+            transition: 0.2s;                     /* Transición suave */
+        }
+        .btn-menu-abrir:hover { background: rgba(229, 169, 99, 0.15); border-color: var(--dorado); } /* Estado hover */
+
+        /* Flechas de navegación ← → */
+        .flecha-nav {
+            background: rgba(255,255,255,0.06);   /* Fondo translúcido */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            color: white;                         /* Texto blanco */
+            width: 34px;                          /* Ancho fijo */
+            height: 34px;                         /* Alto fijo */
+            border-radius: 8px;                   /* Esquinas redondeadas */
+            cursor: pointer;                      /* Cursor mano */
+            font-weight: bold;                    /* Negrita */
+            font-size: 15px;                      /* Tamaño flecha */
+            display: flex;                        /* Flex para centrar */
+            align-items: center;                  /* Centrado vertical */
+            justify-content: center;              /* Centrado horizontal */
+            transition: 0.2s;                     /* Transición */
+        }
+        .flecha-nav:hover { background: rgba(255,255,255,0.12); border-color: var(--dorado); color: var(--dorado); } /* Hover dorado */
+
+        /* =========================================================
+           ZONA 5: MODAL DEL MENÚ (LA "CONSTELACIÓN" DE MÓDULOS)
+           ========================================================= */
+        .modal-menu-fondo {                       /* Fondo oscuro que cubre toda la pantalla */
+            position: fixed;                      /* Fijo respecto al viewport */
+            top: 0; left: 0;                      /* Pegado a la esquina superior izquierda */
+            width: 100vw;                         /* Ancho total de la ventana */
+            height: 100vh;                        /* Alto total de la ventana */
+            background: rgba(0,0,0,0.85);         /* Negro semitransparente */
+            display: none;                        /* Oculto por defecto */
+            justify-content: center;              /* Centra contenido horizontal */
+            align-items: center;                  /* Centra contenido vertical */
+            z-index: 999;                         /* Muy por encima del resto */
+            backdrop-filter: blur(5px);           /* Difumina el fondo detrás */
+        }
+        .modal-menu-fondo.abierto { display: flex; } /* Cuando tiene la clase .abierto, se muestra */
+
+        .caja-constelacion {                      /* Caja del menú de módulos */
+            background: linear-gradient(135deg, #321b10, #170a04); /* Gradiente café */
+            border: 1px solid var(--dorado);      /* Borde dorado */
+            border-radius: 16px;                  /* Esquinas redondeadas */
+            padding: 40px;                        /* Espacio interno amplio */
+            width: 95%;                           /* 95% del ancho disponible */
+            max-width: 900px;                     /* Máximo 900px */
+            text-align: center;                   /* Texto centrado */
+            position: relative;                   /* Para posicionar la X absoluta */
+            max-height: 90vh;                     /* No más del 90% del alto de pantalla */
+            overflow-y: auto;                     /* Scroll vertical si hace falta */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8); /* Sombra profunda */
+        }
+        
+        .grid-constelacion {                      /* Grid de módulos (los circulitos) */
+            display: grid;                        /* Uso de CSS Grid */
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Columnas auto-responsivas */
+            gap: 18px;                            /* Espacio entre celdas */
+            margin-top: 25px;                     /* Separación superior */
+        }
+        
+        .item-menu-circular {                     /* Cada ítem del menú (icono + texto) */
+            display: flex;                        /* Flexbox vertical */
+            flex-direction: column;               /* Icono arriba, texto abajo */
+            align-items: center;                  /* Centrado horizontal */
+            cursor: pointer;                      /* Cursor mano */
+            transition: 0.2s;                     /* Transición */
+        }
+        .item-menu-circular:hover { transform: scale(1.08); } /* Agranda al pasar mouse */
+        
+        .circulo-icono {                          /* Círculo con el icono */
+            width: 55px;                          /* Ancho fijo */
+            height: 55px;                         /* Alto fijo */
+            border-radius: 50%;                   /* Forma circular */
+            background: rgba(255,255,255,0.04);   /* Fondo blanco muy tenue */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            display: flex;                        /* Flex para centrar el emoji */
+            align-items: center;                  /* Centrado vertical */
+            justify-content: center;              /* Centrado horizontal */
+            font-size: 24px;                      /* Tamaño del emoji */
+            margin-bottom: 8px;                   /* Separación con el texto */
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.05); /* Sombra interior */
+            transition: 0.2s;                     /* Transición */
+        }
+        .item-menu-circular:hover .circulo-icono { background: rgba(229, 169, 99, 0.15); border-color: var(--dorado); } /* Hover dorado */
+
+        /* =========================================================
+           ZONA 6: MOTOR DE PANTALLAS (CONTENEDOR Y ANIMACIONES)
+           ========================================================= */
+        .contenedor-principal {                   /* Área de scroll de todas las pantallas */
+            flex-grow: 1;                         /* Crece para ocupar el espacio libre */
+            overflow-y: auto;                     /* Scroll vertical interno */
+            display: flex;                        /* Flex vertical */
+            flex-direction: column;               /* Hijos en columna */
+            align-items: center;                  /* Centrado horizontal */
+            padding: 35px 20px;                   /* Espacio interno */
+        }
+
+        .pantalla {                               /* Cada pantalla individual */
+            display: none;                        /* Oculta por defecto */
+            width: 100%;                          /* Ancho completo del contenedor */
+            max-width: 1200px;                    /* Máximo 1200px */
+            animation: aparecer 0.35s ease-out forwards; /* Animación de entrada */
+            flex-direction: column;               /* Flex vertical */
+            align-items: center;                  /* Centrado horizontal */
+        } 
+        .pantalla.activa { display: flex; } /* Solo la pantalla .activa se muestra */
+
+        @keyframes aparecer {                     /* Animación de aparición */
+            from { opacity: 0; transform: translateY(8px); } /* Inicio: invisible y desplazado abajo */
+            to { opacity: 1; transform: translateY(0); }     /* Final: visible y en posición */
+        } 
+        @keyframes latidoTrabajo {                /* Animación de "latido" para "trabajando" */
+            0% { opacity: 1; transform: scale(1); }       /* Estado normal */
+            50% { opacity: 0.75; transform: scale(0.97); } /* Aplastado y semitransparente */
+            100% { opacity: 1; transform: scale(1); }      /* Vuelve a la normalidad */
+        }
+
+        /* =========================================================
+           ZONA 7: PANTALLA DE INICIO Y LOGIN
+           ========================================================= */
+        .hero-inicio {                            /* Bloque central de bienvenida */
+            text-align: center;                   /* Texto centrado */
+            margin-bottom: 40px;                  /* Separación inferior */
+            margin-top: 2vh;                      /* Pequeño margen superior */
+        } 
+        .hero-inicio h1 { font-size: 42px; margin-bottom: 10px; font-weight: 700; } /* Título grande */
+        .hero-inicio h1 span { color: var(--dorado); } /* Parte dorada del título */
+        .hero-inicio p { color: var(--texto-gris); font-size: 14px; margin-bottom: 30px; } /* Párrafo gris */
+        
+        .stats { display: flex; justify-content: center; gap: 50px; } /* Fila de estadísticas principales */
+        .stat-item { text-align: center; }                            /* Cada estadística */
+        .stat-item h3 { font-size: 24px; color: var(--dorado); }      /* Número grande dorado */
+        .stat-item p { font-size: 10px; color: var(--texto-gris); text-transform: uppercase; letter-spacing: 1px; } /* Etiqueta en mayúsculas */
+
+        .panel-ancho {                            /* Panel ancho reutilizable */
+            background: var(--panel-bg);          /* Fondo translúcido */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            border-radius: 16px;                  /* Esquinas redondeadas */
+            padding: 35px 40px;                   /* Espacio interno generoso */
+            width: 100%;                          /* Ancho completo */
+            max-width: 800px;                     /* Máximo 800px */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); /* Sombra fuerte */
+            backdrop-filter: blur(10px);          /* Difumina fondo detrás */
+        } 
+        .panel-login {                            /* Panel específico del login */
+            background: var(--panel-bg);          /* Fondo translúcido */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            margin-top: 5vh;                      /* Separación superior */
+            border-radius: 16px;                  /* Esquinas redondeadas */
+            padding: 30px;                        /* Espacio interno */
+            width: 100%;                          /* Ancho completo */
+            max-width: 400px;                     /* Máximo 400px (más estrecho) */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); /* Sombra */
+            backdrop-filter: blur(10px);          /* Difumina fondo */
+        } 
+
+        .grid-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; } /* Dos columnas iguales con separación */
+
+        .card-btn {                               /* Botón grande tipo "card" */
+            background: rgba(255,255,255,0.03);   /* Fondo muy tenue */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            border-radius: 12px;                  /* Esquinas redondeadas */
+            padding: 14px 15px;                   /* Espacio interno */
+            display: flex;                        /* Flex horizontal */
+            align-items: center;                  /* Centrado vertical */
+            cursor: pointer;                      /* Cursor mano */
+            transition: all 0.2s;                 /* Transición de todo */
+            text-align: left;                     /* Texto alineado a la izquierda */
+        } 
+        .card-btn:hover { background: var(--hover-boton); border-color: var(--dorado); transform: translateY(-3px); } /* Hover con elevación */
+        .card-btn.dorado { background: var(--hover-boton); border-color: var(--dorado); } /* Variante destacada (dorada) */
+        
+        .icono-card {                             /* Icono del card */
+            background: rgba(255,255,255,0.08);   /* Fondo blanco tenue */
+            width: 35px;                          /* Ancho fijo */
+            height: 35px;                         /* Alto fijo */
+            display: flex;                        /* Flex para centrar */
+            align-items: center;                  /* Centrado vertical */
+            justify-content: center;              /* Centrado horizontal */
+            border-radius: 8px;                   /* Esquinas redondeadas */
+            margin-right: 15px;                   /* Separación con el texto */
+            font-weight: bold;                    /* Negrita */
+        } 
+        .card-btn.dorado .icono-card { background: var(--dorado); color: black; } /* Icono dorado en variante destacada */
+        .textos-card h4 { font-size: 14px; margin-bottom: 3px; } /* Título del card */
+        .textos-card p { font-size: 11px; color: var(--texto-gris); } /* Descripción del card */
+
+        .cabecera-login { text-align: center; margin-bottom: 25px; } /* Cabecera del formulario login */
+        .cabecera-login h2 { font-size: 18px; margin-bottom: 5px; }  /* Título del login */
+        .cabecera-login p { font-size: 11px; color: var(--texto-gris); } /* Subtítulo gris */
+
+        .grupo-input { margin-bottom: 15px; width: 100%; } /* Contenedor de cada input */
+        .grupo-input label { display: flex; justify-content: space-between; font-size: 11px; color: var(--texto-gris); margin-bottom: 5px; } /* Label con espacio entre texto y link */
+        .grupo-input label a { color: var(--dorado); text-decoration: none; } /* Link dorado sin subrayado */
+        .grupo-input input { width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--borde-panel); border-radius: 8px; color: white; outline: none; transition: 0.2s; } /* Input estilizado */
+        .grupo-input input:focus { border-color: var(--dorado); box-shadow: 0 0 10px rgba(229,169,99,0.2); } /* Foco con borde y glow dorado */
+        
+        .btn-submit { width: 100%; padding: 12px; background: var(--dorado); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; } /* Botón de envío */
+        .btn-submit:hover { transform: scale(1.02); filter: brightness(1.1); } /* Hover con zoom y brillo */
+
+        .lista-demos { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; width: 100%; } /* Lista vertical de cuentas demo */
+        .demo-item { display: flex; align-items: center; border: 1px solid var(--borde-panel); padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: background 0.2s; background: rgba(255,255,255,0.01); } /* Cada cuenta demo */
+        .demo-item:hover { background-color: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); } /* Hover claro */
+        
+        .avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; } /* Círculo con inicial */
+        .textos-demo h4 { font-size: 12px; margin-bottom: 2px; } /* Nombre del rol */
+        .textos-demo p { font-size: 9px; color: var(--texto-gris); } /* Descripción del rol */
+        .etiqueta-rol { margin-left: auto; font-size: 9px; padding: 4px 8px; border-radius: 12px; font-weight: bold; } /* Píldora con el rol */
+
+        .rol-admin { background: rgba(229, 169, 99, 0.15); color: var(--color-admin); border: 1px solid var(--color-admin); } /* Píldora admin */
+        .rol-almacen { background: rgba(147, 51, 234, 0.15); color: var(--color-almacen); border: 1px solid var(--color-almacen); } /* Píldora almacén */
+        .rol-prod { background: rgba(236, 72, 153, 0.15); color: var(--color-prod); border: 1px solid var(--color-prod); } /* Píldora producción */
+        .rol-prov { background: rgba(16, 185, 129, 0.15); color: var(--color-prov); border: 1px solid var(--color-prov); } /* Píldora proveedor */
+
+        .btn-volver { background: none; border: none; color: var(--texto-gris); font-size: 11px; margin-top: 20px; cursor: pointer; text-decoration: underline; } /* Link "volver" */
+        .btn-volver:hover { color: white; } /* Hover blanco */
+
+        /* =========================================================
+           ZONA 8: ESTILOS GENERALES DEL DASHBOARD / CATÁLOGO
+           ========================================================= */
+        .dash-hero {                              /* Bloque destacado del dashboard */
+            background: linear-gradient(135deg, rgba(229, 169, 99, 0.22) 0%, rgba(229, 169, 99, 0.04) 100%); /* Fondo degradado dorado */
+            border: 1px solid var(--dorado);      /* Borde dorado */
+            border-radius: 16px;                  /* Esquinas redondeadas */
+            padding: 30px;                        /* Espacio interno */
+            position: relative;                   /* Para posicionar elementos internos */
+            width: 100%;                          /* Ancho completo */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Sombra */
+        }
+        .dash-hero h2 { font-size: 24px; margin-bottom: 5px; font-weight: 600; } /* Título del hero */
+        .dash-hero p { color: var(--texto-gris); font-size: 13px; max-width: 80%; } /* Párrafo gris */
+        
+        .dash-grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px;} /* Grid de estadísticas */
+        .dash-stat-card { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; transition: transform 0.2s; } /* Tarjeta de estadística */
+        .dash-stat-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.25); } /* Hover */
+        .dash-stat-card h3 { font-size: 24px; margin-bottom: 2px; } /* Número grande */
+        .dash-stat-card p { font-size: 10px; color: var(--texto-gris); text-transform: uppercase; letter-spacing: 1px; } /* Etiqueta en mayúsculas */
+
+        .header-catalogo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; } /* Cabecera de sección */
+        .header-catalogo h2 { font-size: 24px; font-weight: 600; margin-bottom: 5px; } /* Título de la sección */
+        .header-catalogo p { font-size: 12px; color: var(--texto-gris); } /* Subtítulo */
+        .btn-nuevo { background: var(--dorado); color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; } /* Botón "nuevo" dorado */
+        .btn-nuevo:hover { filter: brightness(1.1); transform: scale(1.02); } /* Hover */
+
+        .barra-filtros { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; width: 100%; } /* Fila de filtros */
+        .barra-filtros input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 15px; border-radius: 8px; font-size: 12px; width: 300px; outline: none; } /* Buscador */
+        .filtros-botones span { font-size: 12px; color: var(--texto-gris); margin-left: 15px; cursor: pointer; transition: 0.2s; } /* Cada filtro */
+        .filtros-botones span:hover { color: white; } /* Hover */
+        .filtros-botones span.activo { color: var(--dorado); font-weight: bold; } /* Filtro activo */
+
+        .grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; width: 100%; } /* Grid de productos */
+        .card-producto { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; } /* Cada producto */
+        .card-producto:hover { border-color: rgba(229,169,99,0.3); transform: translateY(-3px); } /* Hover */
+        .espacio-imagen { height: 140px; background-color: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; position: relative; } /* Zona de imagen */
+        .info-producto { padding: 15px; flex-grow: 1; } /* Info del producto */
+        .info-producto h3 { font-size: 16px; margin-bottom: 5px; display: flex; justify-content: space-between; } /* Título del producto */
+        .info-producto h3 span { font-size: 11px; color: var(--texto-gris); font-weight: normal; } /* Precio/secundario */
+        .info-producto p { font-size: 11px; color: var(--texto-gris); line-height: 1.4; margin-bottom: 15px; } /* Descripción */
+
+        .acciones-producto { display: flex; gap: 8px; } /* Fila de botones */
+        .btn-accion { flex: 1; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--borde-panel); color: white; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.2s; } /* Botón de acción */
+        .btn-accion:hover { background: rgba(255,255,255,0.1); } /* Hover */
+        .btn-accion.principal { background: rgba(229, 169, 99, 0.15); color: var(--dorado); border-color: var(--dorado); } /* Variante principal */
+        .btn-accion.principal:hover { background: rgba(229, 169, 99, 0.25); } /* Hover variante principal */
+
+        .card-agregar { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed rgba(255,255,255,0.2); background: transparent; min-height: 300px; cursor: pointer; transition: 0.2s; } /* Card "agregar producto" */
+        .card-agregar:hover { background: rgba(255,255,255,0.02); border-color: var(--dorado); color: var(--dorado); } /* Hover */
+
+        .formulario-producto { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; width: 100%; } /* Grid 2 columnas para el form */
+        .caja-subir-imagen { border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: rgba(0,0,0,0.2); position: relative; } /* Zona de subir imagen */
+        .caja-subir-imagen input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; } /* Input file invisible */
+        .grupo-input-prod { margin-bottom: 20px; display: flex; flex-direction: column; width: 100%;} /* Grupo de input del form producto */
+        .grupo-input-prod input, .grupo-input-prod select, .grupo-input-prod textarea { padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--borde-panel); border-radius: 8px; color: white; outline: none; } /* Inputs del form producto */
+
+        .tabla-inventario-caja { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; padding: 20px; width: 100%; overflow-x: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.4); } /* Contenedor de tabla */
+        .tabla-oscura { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; } /* Tabla oscura */
+        .tabla-oscura th { color: var(--texto-gris); font-size: 10px; padding: 12px 10px; border-bottom: 1px solid var(--borde-panel); text-transform: uppercase; letter-spacing: 1px; } /* Cabecera */
+        .tabla-oscura td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.03); } /* Celdas */
+        .img-miniatura { width: 30px; height: 30px; border-radius: 6px; background: rgba(255,255,255,0.08); display: inline-block; } /* Miniatura */
+
+        /* =========================================================
+           ZONA 9: LAYOUT DEL DASHBOARD (MÓDULOS 01, 04, 05)
+           ========================================================= */
+        .dash-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; width: 100%; margin-bottom: 25px; } /* Layout 2 columnas 2:1 */
+        .dash-panel-lateral { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4); } /* Panel lateral */
+        .meta-dia { margin-bottom: 15px; } /* Bloque de meta (barra) */
+        .meta-dia:last-child { margin-bottom: 0; } /* Quita margen al último */
+        .meta-header { display: flex; justify-content: space-between; font-size: 11px; color: var(--texto-gris); margin-bottom: 5px; font-weight: 600; } /* Cabecera de la barra */
+        
+        .barra-progreso-bg { width: 100%; height: 7px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; margin-bottom: 3px; } /* Fondo de la barra */
+        .barra-progreso-fill { height: 100%; background: linear-gradient(90deg, #d49555, #e5a963); border-radius: 10px; transition: width 1s; } /* Relleno animado */
+
+        .caja-historial { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.4); } /* Caja de historial */
+        .filtros-movimientos { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--borde-panel); padding-bottom: 15px; } /* Fila de filtros */
+        .btn-filtro-mov { background: rgba(255,255,255,0.04); border: 1px solid var(--borde-panel); color: var(--texto-gris); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.2s; } /* Botón filtro */
+        .btn-filtro-mov.activo { background: rgba(229, 169, 99, 0.2); color: var(--dorado); border-color: var(--dorado); font-weight: bold; } /* Filtro activo */
+
+        .lista-movimientos { display: flex; flex-direction: column; } /* Lista de movimientos */
+        .item-movimiento { display: flex; justify-content: space-between; align-items: center; padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); transition: 0.2s; } /* Cada movimiento */
+        .item-movimiento:hover { background: rgba(255,255,255,0.03); } /* Hover */
+
+        .mov-izq { display: flex; align-items: center; gap: 15px; } /* Lado izquierdo del movimiento */
+        .mov-icono { width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--borde-panel); } /* Icono del movimiento */
+        .mov-textos h4 { font-size: 13px; margin-bottom: 3px; } /* Título del movimiento */
+        .mov-textos p { font-size: 10px; color: var(--texto-gris); } /* Detalle */
+
+        .mov-der { text-align: right; } /* Lado derecho alineado a la derecha */
+        .mov-cantidad { font-size: 14px; font-weight: bold; margin-bottom: 2px; } /* Cantidad */
+        .mov-entrada { color: var(--color-prov); } /* Verde para entradas */
+        .mov-salida { color: var(--color-rojo); } /* Rojo para salidas */
+        .badge-completado { background: rgba(16, 185, 129, 0.12); color: var(--color-prov); padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.2); } /* Badge de estado */
+
+        .banner-produccion { background: linear-gradient(135deg, rgba(147, 51, 234, 0.25) 0%, rgba(26, 17, 12, 0.95) 100%); border: 1px solid rgba(147, 51, 234, 0.4); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); } /* Banner de producción */
+        .banner-produccion h3 { font-size: 18px; color: #c084fc; margin-bottom: 5px; } /* Título del banner */
+        
+        .grid-produccion { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; } /* Grid de tarjetas de producción */
+        .card-prod-activa { background: var(--panel-bg); border: 1px solid var(--borde-panel); border-radius: 12px; padding: 18px; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.3); } /* Tarjeta producción activa */
+        .card-prod-activa::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--dorado); } /* Barra dorada lateral */
+        
+        .prod-header { display: flex; justify-content: space-between; margin-bottom: 12px; } /* Cabecera de la tarjeta */
+        .prod-header h4 { font-size: 14px; font-weight: 600; } /* Nombre producto */
+        .prod-header span { font-size: 10px; color: var(--texto-gris); } /* Subtítulo */
+        
+        .prod-detalles { background: rgba(0,0,0,0.25); border-radius: 8px; padding: 12px; margin-bottom: 15px; font-size: 11px; color: var(--texto-gris); border: 1px solid rgba(255,255,255,0.02); } /* Bloque de detalles */
+        .prod-detalles div { display: flex; justify-content: space-between; margin-bottom: 6px; } /* Fila de detalle */
+        .prod-detalles div:last-child { margin-bottom: 0; } /* Sin margen en la última */
+        
+        .trabajando { animation: latidoTrabajo 2s infinite ease-in-out; } /* Clase que aplica la animación de latido */
+        .contenedor-dashboard { width: 100%; max-width: 1050px; } /* Contenedor de las pantallas del dashboard */
+
+        /* =========================================================
+           ZONA 10: ⭐ DASHBOARD MEJORADO (NUEVOS ESTILOS) ⭐
+           ========================================================= */
+
+        /* --- Banner de bienvenida --- */
+        .dash-bienvenida {                         /* Bloque superior de saludo */
+            display: flex;                         /* Flex horizontal */
+            justify-content: space-between;        /* Separa texto y botones */
+            align-items: center;                   /* Centrado vertical */
+            background: linear-gradient(135deg, rgba(229,169,99,0.15) 0%, rgba(229,169,99,0.02) 100%); /* Degradado dorado sutil */
+            border: 1px solid var(--dorado);       /* Borde dorado */
+            border-radius: 16px;                   /* Esquinas redondeadas */
+            padding: 25px 30px;                    /* Espacio interno */
+            margin-bottom: 25px;                   /* Separación inferior */
+            flex-wrap: wrap;                       /* Permite bajar si no hay espacio */
+            gap: 15px;                             /* Separación entre elementos */
+        }
+        .dash-bienvenida h2 { font-size: 22px; margin-bottom: 5px; } /* Saludo grande */
+        .dash-bienvenida p { font-size: 12px; color: var(--texto-gris); } /* Subtítulo gris */
+
+        /* --- Botones de acción rápida --- */
+        .dash-acciones-rapidas { display: flex; gap: 10px; } /* Fila de botones */
+        .btn-rapido { padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; } /* Estilo base del botón rápido */
+        .btn-rapido.primary { background: var(--dorado); color: black; } /* Variante principal (dorado) */
+        .btn-rapido.secondary { background: rgba(255,255,255,0.08); color: white; border: 1px solid var(--borde-panel); } /* Variante secundaria (gris) */
+        .btn-rapido:hover { transform: translateY(-2px); filter: brightness(1.1); } /* Hover */
+
+        /* --- Grid de KPIs (tarjetas de indicadores) --- */
+        .dash-kpis {                              /* Grid de 4 KPIs */
+            display: grid;                        /* Uso de Grid */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Columnas auto-responsivas */
+            gap: 15px;                            /* Espacio entre tarjetas */
+            margin-bottom: 25px;                  /* Separación inferior */
+        }
+        .kpi-card {                               /* Tarjeta individual KPI */
+            background: var(--panel-bg);          /* Fondo translúcido */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            border-radius: 12px;                  /* Esquinas redondeadas */
+            padding: 20px;                        /* Espacio interno */
+            display: flex;                        /* Flex horizontal */
+            gap: 15px;                            /* Espacio icono-info */
+            align-items: flex-start;              /* Alinea arriba */
+            transition: 0.2s;                     /* Transición */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3); /* Sombra */
+        }
+        .kpi-card:hover { transform: translateY(-3px); border-color: rgba(229,169,99,0.4); } /* Hover */
+        .kpi-icon {                               /* Círculo con icono del KPI */
+            width: 45px; height: 45px;            /* Tamaño fijo */
+            border-radius: 10px;                  /* Esquinas redondeadas */
+            display: flex; align-items: center; justify-content: center; /* Centrado */
+            font-size: 20px;                      /* Tamaño emoji */
+            flex-shrink: 0;                       /* No se encoge */
+        }
+        .kpi-info { flex-grow: 1; }              /* La info ocupa el resto */
+        .kpi-info p { font-size: 10px; color: var(--texto-gris); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; } /* Etiqueta del KPI */
+        .kpi-info h3 { font-size: 26px; font-weight: 700; margin-bottom: 4px; } /* Número grande */
+        .kpi-trend { font-size: 10px; font-weight: bold; } /* Tendencia (↑ ↓) */
+        .kpi-trend.up { color: #10b981; }        /* Positiva: verde */
+        .kpi-trend.down { color: #f43f5e; }      /* Negativa: rojo */
+        .kpi-trend.neutral { color: var(--texto-gris); } /* Neutral: gris */
+
+        /* --- Tarjeta genérica reutilizable --- */
+        .dash-card {                              /* Bloque blanco de sección */
+            background: var(--panel-bg);          /* Fondo translúcido */
+            border: 1px solid var(--borde-panel); /* Borde sutil */
+            border-radius: 12px;                  /* Esquinas redondeadas */
+            padding: 20px;                        /* Espacio interno */
+            margin-bottom: 20px;                  /* Separación inferior */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3); /* Sombra */
+        }
+        .dash-card h3 { font-size: 14px; margin-bottom: 15px; color: var(--dorado); } /* Título de la sección */
+
+        /* --- Mini gráfico de barras (semanal) --- */
+        .mini-chart {                             /* Contenedor del gráfico */
+            display: flex;                        /* Flex horizontal */
+            align-items: flex-end;                /* Alinea barras abajo */
+            justify-content: space-between;       /* Espacio entre columnas */
+            height: 120px;                        /* Altura del gráfico */
+            gap: 8px;                             /* Separación entre barras */
+            padding-top: 10px;                    /* Espacio arriba */
+        }
+        .chart-col {                              /* Cada columna (barra + label) */
+            flex: 1;                              /* Todas iguales */
+            display: flex;                        /* Flex vertical */
+            flex-direction: column;               /* Barra arriba, label abajo */
+            align-items: center;                  /* Centrado horizontal */
+            gap: 5px;                             /* Separación barra-label */
+            height: 100%;                         /* Altura completa */
+            justify-content: flex-end;            /* Empuja hacia abajo */
+        }
+        .chart-bar {                              /* Barra del gráfico */
+            width: 100%;                          /* Ocupa toda la columna */
+            background: linear-gradient(to top, #d49555, #e5a963); /* Degradado dorado vertical */
+            border-radius: 4px 4px 0 0;           /* Redondea arriba */
+            min-height: 10px;                     /* Mínimo visible */
+            transition: 0.3s;                     /* Transición de altura */
+        }
+        .chart-bar:hover { filter: brightness(1.2); } /* Hover brillante */
+        .chart-label { font-size: 9px; color: var(--texto-gris); } /* Etiqueta del día */
+
+        /* --- Lista Top productos --- */
+        .top-lista { display: flex; flex-direction: column; gap: 10px; } /* Lista vertical */
+        .top-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); } /* Fila del top */
+        .top-item:last-child { border-bottom: none; } /* Último sin borde */
+        .top-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(229,169,99,0.2); color: var(--dorado); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; } /* Número del top */
+        .top-nombre { flex-grow: 1; font-size: 12px; } /* Nombre del producto */
+        .top-cant { font-size: 11px; font-weight: bold; color: white; } /* Cantidad vendida */
+
+        /* --- Alertas críticas --- */
+        .alerta-item { display: flex; gap: 10px; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid; } /* Alerta base */
+        .alerta-item.rojo { background: rgba(244,63,94,0.08); border-color: var(--color-rojo); } /* Alerta roja */
+        .alerta-item.amarillo { background: rgba(245,158,11,0.08); border-color: var(--color-amarillo); } /* Alerta amarilla */
+        .alerta-item h4 { font-size: 11px; margin-bottom: 3px; } /* Título de la alerta */
+        .alerta-item p { font-size: 9px; color: var(--texto-gris); } /* Detalle de la alerta */
+
+        /* --- Timeline de actividad --- */
+        .timeline { display: flex; flex-direction: column; gap: 12px; position: relative; padding-left: 15px; } /* Contenedor del timeline */
+        .timeline::before { content: ''; position: absolute; left: 4px; top: 5px; bottom: 5px; width: 2px; background: rgba(229,169,99,0.2); } /* Línea vertical de conexión */
+        .tl-item { position: relative; padding-left: 15px; } /* Cada evento */
+        .tl-item::before { content: ''; position: absolute; left: -15px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); border: 2px solid var(--fondo-oscuro); } /* Punto dorado del evento */
+        .tl-item h4 { font-size: 11px; margin-bottom: 2px; } /* Título del evento */
+        .tl-item p { font-size: 9px; color: var(--texto-gris); } /* Detalle del evento */
+
+        /* --- Estado del obrador (semáforo) --- */
+        .estado-fila { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 11px; } /* Fila de estado */
+        .estado-fila:last-child { border-bottom: none; } /* Última sin borde */
+        .semaforo { display: flex; align-items: center; gap: 6px; font-size: 10px; } /* Contenedor semáforo */
+        .semaforo::before { content: ''; width: 8px; height: 8px; border-radius: 50%; } /* Círculo del semáforo */
+        .semaforo.verde::before { background: #10b981; box-shadow: 0 0 8px #10b981; } /* Verde */
+        .semaforo.amarillo::before { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; } /* Amarillo */
+        .semaforo.rojo::before { background: #f43f5e; box-shadow: 0 0 8px #f43f5e; } /* Rojo */
+    </style> 
+</head> 
+<body> 
+
+    <!-- ============================================================
+         BARRA SUPERIOR DE NAVEGACIÓN (oculta al inicio)
+         ============================================================ -->
+    <div id="barra-navegacion" class="barra-superior" style="display: none;"> 
+        <div style="display: flex; align-items: center;"> <!-- Contenedor izquierdo -->
+            <button class="btn-menu-abrir" onclick="abrirMenu()">☰ Menú</button> <!-- Botón que abre el modal -->
+            
+            <div style="display: flex; gap: 8px; margin-right: 15px;"> <!-- Contenedor de flechas -->
+                <button class="flecha-nav" onclick="retrocederHistorial()" title="Atrás">←</button> <!-- Ir atrás -->
+                <button class="flecha-nav" onclick="avanzarHistorial()" title="Adelante">→</button> <!-- Ir adelante -->
+            </div>
+
+            <!-- Logo "VG" -->
+            <div style="width: 40px; height: 40px; background: var(--dorado); border-radius: 8px; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold; margin-right: 15px; box-shadow: 0 2px 10px rgba(229,169,99,0.3);">VG</div>
+            
+            <div> <!-- Nombre del sistema -->
+                <h3 style="font-size: 16px; font-weight: 600;">Villa de Guaduas</h3> 
+                <p style="font-size: 10px; color: var(--texto-gris);">Sistema de Producción</p>
+            </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 15px;"> <!-- Contenedor derecho -->
+            <div style="text-align: right;"> <!-- Estado de sesión -->
+                <h4 style="font-size: 12px; margin-bottom: 2px;">Sesión Activa</h4>
+                <p style="font-size: 10px; color: var(--color-admin);">● En línea</p>
+            </div>
+            <button style="background:transparent; border:none; color:var(--texto-gris); cursor:pointer; font-size:22px; transition:0.2s;" onclick="cerrarSesion()" title="Cerrar sesión">×</button> <!-- Botón cerrar sesión -->
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DEL MENÚ "CONSTELACIÓN" (20 MÓDULOS)
+         ============================================================ -->
+    <div id="modal-menu-nav" class="modal-menu-fondo"> 
+        <div class="caja-constelacion"> 
+            <button style="position: absolute; top: 15px; right: 20px; background: none; border: none; color: white; font-size: 22px; cursor: pointer;" onclick="cerrarMenu()">×</button> <!-- Botón X para cerrar -->
+            <h2 style="font-size: 22px; margin-bottom: 5px;">Módulos del Sistema</h2> <!-- Título del modal -->
+            <p style="font-size: 12px; color: var(--texto-gris);">Selecciona un módulo para navegar</p> <!-- Subtítulo -->
+            
+            <div class="grid-constelacion"> 
+                <!-- MÓDULO 1: Dashboard -->
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-dashboard-admin')">
+                    <div class="circulo-icono" style="border-color: var(--dorado); color: var(--dorado);">🏠</div><span style="font-size: 10px; font-weight:600;">Dashboard</span>
+                </div>
+                <!-- MÓDULO 2: Productos -->
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-productos-admin')">
+                    <div class="circulo-icono" style="border-color: var(--color-prod); color: var(--color-prod);">🍪</div><span style="font-size: 10px; font-weight:600;">Productos</span>
+                </div>
+                <!-- MÓDULO 3: Inventario -->
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-inventario')">
+                    <div class="circulo-icono" style="border-color: var(--color-almacen); color: var(--color-almacen);">📦</div><span style="font-size: 10px; font-weight:600;">Inventario</span>
+                </div>
+                <!-- MÓDULO 4: Movimientos -->
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-movimientos')">
+                    <div class="circulo-icono" style="border-color: #3b82f6; color: #3b82f6;">🔄</div><span style="font-size: 10px; font-weight:600;">Movimientos</span>
+                </div>
+                <!-- MÓDULO 5: Producción -->
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-produccion')">
+                    <div class="circulo-icono" style="border-color: #f97316; color: #f97316;">👨‍🍳</div><span style="font-size: 10px; font-weight:600;">Producción</span>
+                </div>
+
+                <!-- MÓDULOS 6-20: en mantenimiento -->
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">🤝</div><span style="font-size: 10px; color: gray;">Proveedores</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">📉</div><span style="font-size: 10px; color: gray;">Mermas</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">🔍</div><span style="font-size: 10px; color: gray;">Trazabilidad</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">⚠️</div><span style="font-size: 10px; color: gray;">Alertas</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">📊</div><span style="font-size: 10px; color: gray;">Reportes</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">📈</div><span style="font-size: 10px; color: gray;">Indicadores</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">💬</div><span style="font-size: 10px; color: gray;">Mensajes</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">🏪</div><span style="font-size: 10px; color: gray;">Secciones</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">🛒</div><span style="font-size: 10px; color: gray;">Abastecimiento</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">👥</div><span style="font-size: 10px; color: gray;">Usuarios</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">⚙️</div><span style="font-size: 10px; color: gray;">Ajustes</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">👤</div><span style="font-size: 10px; color: gray;">Perfil</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">💼</div><span style="font-size: 10px; color: gray;">Contabilidad</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">🌙</div><span style="font-size: 10px; color: gray;">Cierre día</span></div>
+                <div class="item-menu-circular" onclick="navegarDesdeMenu('pantalla-mantenimiento')"><div class="circulo-icono">📋</div><span style="font-size: 10px; color: gray;">Auditoría</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         ÁREA DE SCROLL CON TODAS LAS PANTALLAS
+         ============================================================ -->
+    <div class="contenedor-principal" id="area-scroll"> 
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA 1: INICIO
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-inicio" class="pantalla activa"> 
+            <div class="hero-inicio"> 
+                <p style="font-size: 10px; letter-spacing: 2px; color: var(--dorado);">INVENTARIO INTELIGENTE PARA PRODUCCIÓN ARTESANAL</p> 
+                <h1>Todo el obrador,<br><span>en perfecta armonía.</span></h1> 
+                <p>Controla materias primas, producción, costos y trazabilidad desde una experiencia<br>diseñada para que cada rol trabaje con claridad.</p> 
+                
+                <div class="stats"> 
+                    <div class="stat-item"><h3>20+</h3><p>Módulos conectados</p></div> <!-- Estadística 1 -->
+                    <div class="stat-item"><h3>4</h3><p>Perfiles por rol</p></div> <!-- Estadística 2 -->
+                    <div class="stat-item"><h3>100%</h3><p>Trazabilidad operativa</p></div> <!-- Estadística 3 -->
+                </div> 
+            </div> 
+
+            <div class="panel-ancho"> 
+                <div style="color: #4ade80; font-size: 10px; margin-bottom: 20px; letter-spacing: 1px;"> 
+                    ● SISTEMA OPERATIVO <span style="float: right; color: gray;">V 6.0.0</span> 
+                </div> 
+                <h2 style="font-size: 20px; margin-bottom: 5px;">Bienvenido al turno</h2> 
+                <p style="font-size: 12px; color: var(--texto-gris);">Selecciona el perfil que corresponde a tu operación.</p> 
+
+                <div class="grid-botones"> 
+                    <!-- Botón: ingreso general -->
+                    <div class="card-btn dorado" onclick="cambiarPantalla('pantalla-login-general')"> 
+                        <div class="icono-card">✓</div> 
+                        <div class="textos-card"> 
+                            <h4>Ingreso al sistema</h4> 
+                            <p>Equipos administrativos y producción</p> 
+                        </div> 
+                    </div> 
+                    <!-- Botón: portal proveedores -->
+                    <div class="card-btn" onclick="cambiarPantalla('pantalla-login-prov')"> 
+                        <div class="icono-card">📦</div> 
+                        <div class="textos-card"> 
+                            <h4>Portal de proveedores</h4> 
+                            <p>Pedidos, catálogos y comunicación</p> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA 2: LOGIN GENERAL
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-login-general" class="pantalla"> 
+            <div class="panel-login"> 
+                <div class="cabecera-login"> 
+                    <h2>Bienvenido nuevamente</h2> 
+                    <p>Sistema de Gestión - Villa de Guaduas</p> 
+                </div> 
+
+                <!-- Formulario con onsubmit que evita recarga y llama a simularIngreso -->
+                <form onsubmit="event.preventDefault(); simularIngreso('general');"> 
+                    <div class="grupo-input"> 
+                        <label>Usuario o correo electrónico</label> 
+                        <input id="correo-general" type="email" placeholder="Escribe tu correo..." required> 
+                    </div> 
+                    <div class="grupo-input"> 
+                        <label>Contraseña <a href="#">¿Olvidaste tu contraseña?</a></label> 
+                        <input id="clave-general" type="password" placeholder="Escribe tu contraseña..." required> 
+                    </div> 
+                    <button type="submit" class="btn-submit">▶ Iniciar sesión</button> 
+                </form> 
+
+                <div style="text-align: center; margin-top: 20px; margin-bottom: 15px; font-size: 10px; color: gray;">-- Cuentas de demostración --</div> 
+                
+                <div class="lista-demos"> 
+                    <!-- Cuenta demo: Admin -->
+                    <div class="demo-item" onclick="llenarDatos('admin@villaguaduas.co', 'soyElAdmin123', 'correo-general', 'clave-general')"> 
+                        <div class="avatar rol-admin">A</div> 
+                        <div class="textos-demo"> 
+                            <h4>Administrador</h4> 
+                            <p>Completo + Indicadores</p> 
+                        </div> 
+                        <div class="etiqueta-rol rol-admin">● Administrador</div> 
+                    </div> 
+                    <!-- Cuenta demo: Almacén -->
+                    <div class="demo-item" onclick="llenarDatos('almacen@villaguaduas.co', 'almacenSeguro123', 'correo-general', 'clave-general')"> 
+                        <div class="avatar rol-almacen">A</div> 
+                        <div class="textos-demo"> 
+                            <h4>Auxiliar de Almacén</h4> 
+                            <p>Compras e inventarios</p> 
+                        </div> 
+                        <div class="etiqueta-rol rol-almacen">● Aux. de Almacén</div> 
+                    </div> 
+                    <!-- Cuenta demo: Producción -->
+                    <div class="demo-item" onclick="llenarDatos('produccion@villaguaduas.co', 'produciendoAndo123', 'correo-general', 'clave-general')"> 
+                        <div class="avatar rol-prod">O</div> 
+                        <div class="textos-demo"> 
+                            <h4>Operario Producción</h4> 
+                            <p>La Cabaña de Producción</p> 
+                        </div> 
+                        <div class="etiqueta-rol rol-prod">● Producción</div> 
+                    </div> 
+                </div> 
+            </div> 
+            <button class="btn-volver" onclick="cambiarPantalla('pantalla-inicio')">← Volver al inicio</button> 
+        </div> 
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA 3: LOGIN PROVEEDORES
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-login-prov" class="pantalla"> 
+            <div class="panel-login"> 
+                <div class="cabecera-login"> 
+                    <h2>Portal de proveedores</h2> 
+                    <p>Pedidos, materiales y comunicación</p> 
+                </div> 
+                <form onsubmit="event.preventDefault(); simularIngreso('proveedor');"> 
+                    <div class="grupo-input"> 
+                        <label>Usuario o correo electrónico</label> 
+                        <input id="correo-prov" type="email" placeholder="Escribe tu correo..." required> 
+                    </div> 
+                    <div class="grupo-input"> 
+                        <label>Contraseña <a href="#">¿Olvidaste tu contraseña?</a></label> 
+                        <input id="clave-prov" type="password" placeholder="Escribe tu contraseña..." required> 
+                    </div> 
+                    <button type="submit" class="btn-submit">▶ Iniciar sesión</button> 
+                </form> 
+                <div style="text-align: center; margin-top: 20px; margin-bottom: 15px; font-size: 10px; color: gray;">-- Cuentas de demostración --</div> 
+                <div class="lista-demos"> 
+                    <!-- Cuenta demo: Proveedor -->
+                    <div class="demo-item" onclick="llenarDatos('proveedor.gena@guaduas.co', 'claveProveedor456', 'correo-prov', 'clave-prov')"> 
+                        <div class="avatar rol-prov">P</div> 
+                        <div class="textos-demo"> 
+                            <h4>Proveedor Gena</h4> 
+                            <p>Cotizaciones y envíos</p> 
+                        </div> 
+                        <div class="etiqueta-rol rol-prov">● Proveedor</div> 
+                    </div> 
+                </div> 
+            </div> 
+            <button class="btn-volver" onclick="cambiarPantalla('pantalla-inicio')">← Volver al inicio</button> 
+        </div> 
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA DE MANTENIMIENTO
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-mantenimiento" class="pantalla">
+            <div class="panel-login" style="text-align: center;">
+                <div style="font-size: 50px; margin-bottom: 20px;">🚧</div>
+                <h2 style="font-size: 20px; margin-bottom: 10px; color: var(--color-amarillo);">Módulo en Mantenimiento</h2>
+                <p style="font-size: 12px; color: var(--texto-gris); margin-bottom: 25px;">Esta sección se encuentra en desarrollo para tu rol.<br><br><b>En esta versión, solo el Administrador puede ingresar.</b></p>
+                <button class="btn-submit" onclick="retrocederHistorial()">Regresar</button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             ⭐⭐⭐ PANTALLA 4: DASHBOARD ADMINISTRADOR (REDISEÑADO) ⭐⭐⭐
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="pantalla-dashboard-admin" class="pantalla"> 
+            <div class="contenedor-dashboard">
+
+                <!-- ─── BANNER DE BIENVENIDA + ACCIONES RÁPIDAS ─── -->
+                <div class="dash-bienvenida">
+                    <div> <!-- Texto de bienvenida -->
+                        <h2>Buenos días, Administrador 👋</h2>
+                        <p>Resumen general del obrador · Villa de Guaduas</p>
+                    </div>
+                    <div class="dash-acciones-rapidas"> <!-- Botones de acceso rápido -->
+                        <button class="btn-rapido secondary" onclick="cambiarPantalla('pantalla-movimientos')">🔄 Nuevo movimiento</button>
+                        <button class="btn-rapido primary" onclick="cambiarPantalla('pantalla-produccion')">👨‍🍳 Nueva orden</button>
+                    </div>
+                </div>
+
+                <!-- ─── FILA DE 4 KPIs (INDICADORES PRINCIPALES) ─── -->
+                <div class="dash-kpis">
+                    <!-- KPI 1: Pedidos en cola -->
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(229,169,99,0.15);">📦</div>
+                        <div class="kpi-info">
+                            <p>Pedidos en cola</p>
+                            <h3>10</h3>
+                            <span class="kpi-trend up">↑ 12% vs ayer</span>
+                        </div>
+                    </div>
+                    <!-- KPI 2: Hornos activos -->
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(16,185,129,0.15);">🔥</div>
+                        <div class="kpi-info">
+                            <p>Hornos activos</p>
+                            <h3>5</h3>
+                            <span class="kpi-trend up">↑ Todo en marcha</span>
+                        </div>
+                    </div>
+                    <!-- KPI 3: Alertas críticas -->
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(244,63,94,0.15);">⚠️</div>
+                        <div class="kpi-info">
+                            <p>Alertas de stock</p>
+                            <h3>2</h3>
+                            <span class="kpi-trend down">↓ Azúcar y mantequilla</span>
+                        </div>
+                    </div>
+                    <!-- KPI 4: Producción del día -->
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(147,51,234,0.15);">🏭</div>
+                        <div class="kpi-info">
+                            <p>Producción hoy</p>
+                            <h3>1.240</h3>
+                            <span class="kpi-trend neutral">unidades empacadas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── LAYOUT 2 COLUMNAS (principal + lateral) ─── -->
+                <div class="dash-layout">
+
+                    <!-- ══════════ COLUMNA PRINCIPAL (IZQUIERDA) ══════════ -->
+                    <div>
+
+                        <!-- Panel: Progreso de producción del día -->
+                        <div class="dash-card">
+                            <h3>📊 Progreso de producción del día</h3>
+                            <div class="meta-dia">
+                                <div class="meta-header"><span>🔥 Hornos principales</span><span>75%</span></div>
+                                <div class="barra-progreso-bg"><div class="barra-progreso-fill" style="width: 75%;"></div></div>
+                            </div>
+                            <div class="meta-dia">
+                                <div class="meta-header"><span>📦 Empaque y sello</span><span>45%</span></div>
+                                <div class="barra-progreso-bg"><div class="barra-progreso-fill" style="width: 45%; background: linear-gradient(90deg, #10b981, #34d399);"></div></div>
+                            </div>
+                            <div class="meta-dia">
+                                <div class="meta-header"><span>📉 Control de mermas</span><span>90%</span></div>
+                                <div class="barra-progreso-bg"><div class="barra-progreso-fill" style="width: 90%; background: linear-gradient(90deg, #9333ea, #c084fc);"></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Gráfico de barras semanal -->
+                        <div class="dash-card">
+                            <h3>📈 Producción semanal (unidades)</h3>
+                            <div class="mini-chart">
+                                <div class="chart-col"><div class="chart-bar" style="height: 60%;"></div><span class="chart-label">Lun</span></div> <!-- Lunes -->
+                                <div class="chart-col"><div class="chart-bar" style="height: 75%;"></div><span class="chart-label">Mar</span></div> <!-- Martes -->
+                                <div class="chart-col"><div class="chart-bar" style="height: 55%;"></div><span class="chart-label">Mié</span></div> <!-- Miércoles -->
+                                <div class="chart-col"><div class="chart-bar" style="height: 90%;"></div><span class="chart-label">Jue</span></div> <!-- Jueves -->
+                                <div class="chart-col"><div class="chart-bar" style="height: 70%;"></div><span class="chart-label">Vie</span></div> <!-- Viernes -->
+                                <div class="chart-col"><div class="chart-bar" style="height: 40%;"></div><span class="chart-label">Sáb</span></div> <!-- Sábado -->
+                                <div class="chart-col"><div class="chart-bar" style="height: 20%; background: linear-gradient(to top, #555, #888);"></div><span class="chart-label">Dom</span></div> <!-- Domingo -->
+                            </div>
+                        </div>
+
+                        <!-- Panel: Top productos del día -->
+                        <div class="dash-card">
+                            <h3>🏆 Top productos del día</h3>
+                            <div class="top-lista">
+                                <div class="top-item">
+                                    <div class="top-num">1</div>
+                                    <div class="top-nombre">Galletas de coco</div>
+                                    <div class="top-cant">480 und</div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="top-num">2</div>
+                                    <div class="top-nombre">Achiras del Huila</div>
+                                    <div class="top-cant">320 und</div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="top-num">3</div>
+                                    <div class="top-nombre">Pan de bono</div>
+                                    <div class="top-cant">250 und</div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="top-num">4</div>
+                                    <div class="top-nombre">Galletas de avena</div>
+                                    <div class="top-cant">190 und</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ══════════ COLUMNA LATERAL (DERECHA) ══════════ -->
+                    <div>
+
+                        <!-- Panel: Alertas críticas -->
+                        <div class="dash-card">
+                            <h3>⚠️ Alertas críticas</h3>
+                            <div class="alerta-item rojo">
+                                <div>🚨</div>
+                                <div>
+                                    <h4>Azúcar refinada bajo</h4>
+                                    <p>Quedan 15 kg · Mínimo 20 kg</p>
+                                </div>
+                            </div>
+                            <div class="alerta-item amarillo">
+                                <div>⚠️</div>
+                                <div>
+                                    <h4>Mantequilla por vencer</h4>
+                                    <p>Lote #F-204 vence en 3 días</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Actividad reciente (timeline) -->
+                        <div class="dash-card">
+                            <h3>🕐 Actividad reciente</h3>
+                            <div class="timeline">
+                                <div class="tl-item">
+                                    <h4>Horno 1 encendido</h4>
+                                    <p>Hace 5 min · Juan Pérez</p>
+                                </div>
+                                <div class="tl-item">
+                                    <h4>Orden #00125 iniciada</h4>
+                                    <p>Hace 12 min · Carlos Ruiz</p>
+                                </div>
+                                <div class="tl-item">
+                                    <h4>50 kg de harina recibidos</h4>
+                                    <p>Hace 1 hora · Distribuciones Guaduas</p>
+                                </div>
+                                <div class="tl-item">
+                                    <h4>Orden #00124 completada</h4>
+                                    <p>Hace 2 horas · 200 unidades</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Estado del obrador (semáforo) -->
+                        <div class="dash-card">
+                            <h3>🏭 Estado del obrador</h3>
+                            <div class="estado-fila"><span>Horno 1</span><span class="semaforo verde">Activo</span></div>
+                            <div class="estado-fila"><span>Horno 2</span><span class="semaforo verde">Activo</span></div>
+                            <div class="estado-fila"><span>Mesa central</span><span class="semaforo amarillo">En uso</span></div>
+                            <div class="estado-fila"><span>Área empaque</span><span class="semaforo verde">Activo</span></div>
+                            <div class="estado-fila"><span>Cuarto frío</span><span class="semaforo rojo">Revisar</span></div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div> 
+        </div> 
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA 5: CATÁLOGO DE PRODUCTOS
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-productos-admin" class="pantalla"> 
+            <div class="contenedor-dashboard">
+                <div class="header-catalogo"> 
+                    <div><h2>Catálogo de productos</h2><p>19 productos / 7 activos.</p></div>
+                    <button class="btn-nuevo" onclick="cambiarPantalla('pantalla-nuevo-producto')">+ Nuevo producto</button>
+                </div>
+
+                <div class="barra-filtros"> 
+                    <input type="text" placeholder="🔍 Buscar producto...">
+                    <div class="filtros-botones">
+                        <span class="activo">Todos</span> <span>Galletas</span> <span>Postres</span>
+                    </div>
+                </div>
+
+                <div class="grid-productos"> 
+                    <!-- Producto 1 -->
+                    <div class="card-producto">
+                        <div class="espacio-imagen">
+                            <span style="color: gray; font-size: 11px;">[ IMAGEN GALLETAS DE COCO ]</span>
+                            <div style="position: absolute; top: 10px; left: 10px; background: rgba(16, 185, 129, 0.2); color: var(--color-prov); padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">● Activo</div>
+                        </div>
+                        <div class="info-producto"> 
+                            <h3 style="font-size:16px;">Galletas de coco</h3>
+                            <p style="font-size:11px; color:var(--texto-gris); margin-bottom:10px;">Crujientes por fuera y súper suaves por dentro.</p>
+                            <div class="acciones-producto">
+                                <button class="btn-accion principal" onclick="cambiarPantalla('pantalla-produccion')">Producir</button>
+                                <button class="btn-accion" onclick="avisoFaltaProgramar()">Editar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 2 -->
+                    <div class="card-producto">
+                        <div class="espacio-imagen">
+                            <span style="color: gray; font-size: 11px;">[ IMAGEN GALLETAS ACHIRAS ]</span>
+                            <div style="position: absolute; top: 10px; left: 10px; background: rgba(16, 185, 129, 0.2); color: var(--color-prov); padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">● Activo</div>
+                        </div>
+                        <div class="info-producto">
+                            <h3 style="font-size:16px;">Achiras del Huila</h3>
+                            <p style="font-size:11px; color:var(--texto-gris); margin-bottom:10px;">Bizcochos tradicionales colombianos.</p>
+                            <div class="acciones-producto">
+                                <button class="btn-accion principal" onclick="cambiarPantalla('pantalla-produccion')">Producir</button>
+                                <button class="btn-accion" onclick="avisoFaltaProgramar()">Editar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card "Agregar producto" -->
+                    <div class="card-producto card-agregar" onclick="cambiarPantalla('pantalla-nuevo-producto')">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 10px;">+</div>
+                        <p style="font-size: 12px; color: var(--texto-gris);">Agregar producto</p>
+                    </div>
+                </div> 
+            </div> 
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA 6: NUEVO PRODUCTO
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-nuevo-producto" class="pantalla"> 
+            <div class="panel-ancho" style="max-width: 900px;"> 
+                <div style="margin-bottom: 30px; border-bottom: 1px solid var(--borde-panel); padding-bottom: 15px;">
+                    <h2 style="font-size: 24px;">✨ Crear nuevo producto</h2>
+                    <p style="font-size: 12px; color: var(--texto-gris);">Llena los datos de tu nueva receta y sube la foto.</p>
+                </div>
+
+                <form class="formulario-producto" onsubmit="event.preventDefault(); guardarProducto();">
+                    <div> 
+                        <h4 style="font-size: 14px; margin-bottom: 15px;">Foto del producto</h4>
+                        <div class="caja-subir-imagen" id="area-foto">
+                            <input type="file" accept="image/*" onchange="previsualizarFoto(this)"> 
+                            <div id="texto-foto" style="text-align: center;"> 
+                                <i style="font-size: 40px; margin-bottom: 10px; color: var(--texto-gris); display:block;">📷</i> 
+                                <h4 style="font-size: 16px;">Sube una imagen</h4>
+                                <p style="font-size: 11px; color: var(--texto-gris);">Clic aquí o arrastra la foto</p>
+                            </div>
+                        </div>
+                    </div> 
+
+                    <div>
+                        <h4 style="font-size: 14px; margin-bottom: 15px;">Información general</h4>
+                        <div class="grupo-input-prod">
+                            <label>Nombre del producto *</label>
+                            <input type="text" placeholder="Ej: Galletas de avena" required> 
+                        </div>
+                        <div class="grupo-input-prod">
+                            <label>Categoría</label>
+                            <select> 
+                                <option>Galletas</option>
+                                <option>Postres</option>
+                            </select>
+                        </div>
+                        <div class="grupo-input-prod">
+                            <label>Descripción corta</label>
+                            <textarea rows="3" placeholder="Describe el producto..."></textarea> 
+                        </div>
+                        <div style="display: flex; gap: 15px; margin-top: 20px;">
+                            <button type="button" class="btn-submit" style="background: transparent; border: 1px solid var(--borde-panel); color: white;" onclick="cambiarPantalla('pantalla-productos-admin')">❌ Cancelar</button>
+                            <button type="submit" class="btn-submit">💾 Guardar</button>
+                        </div>
+                    </div> 
+                </form> 
+            </div> 
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             PANTALLA 7: INVENTARIO
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-inventario" class="pantalla">
+            <div class="contenedor-dashboard">
+                <div class="header-catalogo"> 
+                    <div><h2>Inventario de materias primas</h2><p>Control de stock e ingredientes.</p></div>
+                    <button class="btn-nuevo" style="background: rgba(255,255,255,0.1); color: white;" onclick="avisoFaltaProgramar()">+ Nueva materia</button>
+                </div>
+
+                <div class="tabla-inventario-caja"> 
+                    <table class="tabla-oscura"> 
+                        <thead>
+                            <tr>
+                                <th>Icono</th><th>Materia Prima</th><th>Stock Actual</th><th>Requerido</th><th>Estado</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="img-miniatura"></div></td>
+                                <td><strong>Harina de trigo</strong></td>
+                                <td>50 kg</td>
+                                <td>40 kg</td>
+                                <td><span style="background: rgba(16, 185, 129, 0.15); color: var(--color-prov); padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight:bold;">● Normal</span></td>
+                                <td><button style="background:transparent; border:1px solid var(--borde-panel); color:white; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="avisoFaltaProgramar()">Editar</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="img-miniatura"></div></td>
+                                <td><strong>Azúcar refinada</strong></td>
+                                <td>15 kg</td>
+                                <td>20 kg</td>
+                                <td><span style="background: rgba(245, 158, 11, 0.15); color: var(--color-amarillo); padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight:bold;">● Bajo</span></td>
+                                <td><button style="background:transparent; border:1px solid var(--borde-panel); color:white; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="avisoFaltaProgramar()">Editar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             MÓDULO 04: MOVIMIENTOS
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-movimientos" class="pantalla">
+            <div class="contenedor-dashboard">
+                <div class="header-catalogo">
+                    <div><h2>04 Movimientos</h2><p>Historial de entradas, salidas, ajustes y mermas.</p></div>
+                    <button class="btn-submit" style="width: auto; padding: 10px 20px; margin: 0;" onclick="avisoFaltaProgramar()">+ Nuevo movimiento</button>
+                </div>
+
+                <div class="caja-historial">
+                    <div class="filtros-movimientos">
+                        <button class="btn-filtro-mov activo">Todos 23</button>
+                        <button class="btn-filtro-mov">↓ Entradas 15</button>
+                        <button class="btn-filtro-mov">↑ Salidas 6</button>
+                        <button class="btn-filtro-mov">⚠ Mermas 2</button>
+                    </div>
+
+                    <div class="lista-movimientos">
+                        <!-- Movimiento 1 -->
+                        <div class="item-movimiento">
+                            <div class="mov-izq">
+                                <div class="mov-icono">🌾</div>
+                                <div class="mov-textos">
+                                    <h4>Harina de Trigo <span class="badge-completado">Entrada</span></h4>
+                                    <p>Compra proveedor: Distribuciones Guaduas</p>
+                                </div>
+                            </div>
+                            <div class="mov-der">
+                                <div class="mov-cantidad mov-entrada">+ 50 kg</div>
+                                <p style="font-size: 10px; color: var(--texto-gris);">2026-11-10 08:30 AM</p>
+                            </div>
+                        </div>
+                        <!-- Movimiento 2 -->
+                        <div class="item-movimiento">
+                            <div class="mov-izq">
+                                <div class="mov-icono">🍚</div>
+                                <div class="mov-textos">
+                                    <h4>Azúcar Refinada <span class="badge-completado" style="background: rgba(244, 63, 94, 0.12); color: var(--color-rojo); border-color: rgba(244,63,94,0.2);">Salida</span></h4>
+                                    <p>Producción lote galletas coco - Operario: Juan</p>
+                                </div>
+                            </div>
+                            <div class="mov-der">
+                                <div class="mov-cantidad mov-salida">- 20 kg</div>
+                                <p style="font-size: 10px; color: var(--texto-gris);">2026-11-10 09:15 AM</p>
+                            </div>
+                        </div>
+                        <!-- Movimiento 3 -->
+                        <div class="item-movimiento">
+                            <div class="mov-izq">
+                                <div class="mov-icono">🧈</div>
+                                <div class="mov-textos">
+                                    <h4>Mantequilla <span class="badge-completado" style="background: rgba(244, 63, 94, 0.12); color: var(--color-rojo); border-color: rgba(244,63,94,0.2);">Salida</span></h4>
+                                    <p>Producción lote achiras - Operario: Carlos</p>
+                                </div>
+                            </div>
+                            <div class="mov-der">
+                                <div class="mov-cantidad mov-salida">- 5 kg</div>
+                                <p style="font-size: 10px; color: var(--texto-gris);">2026-11-10 10:00 AM</p>
+                            </div>
+                        </div>
+                        <!-- Movimiento 4 (Merma) -->
+                        <div class="item-movimiento">
+                            <div class="mov-izq">
+                                <div class="mov-icono">🥚</div>
+                                <div class="mov-textos">
+                                    <h4>Huevos <span class="badge-completado" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245,158,11,0.2);">Merma</span></h4>
+                                    <p>Ajuste por rotura en almacén</p>
+                                </div>
+                            </div>
+                            <div class="mov-der">
+                                <div class="mov-cantidad" style="color: #f59e0b;">- 12 und</div>
+                                <p style="font-size: 10px; color: var(--texto-gris);">2026-11-09 04:20 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             MÓDULO 05: PRODUCCIÓN
+             ══════════════════════════════════════════════ -->
+        <div id="pantalla-produccion" class="pantalla">
+            <div class="contenedor-dashboard">
+                <div class="header-catalogo">
+                    <div><h2>05 Producción</h2><p>Planeación, consumo y registro de horneados.</p></div>
+                    <button class="btn-submit" style="width: auto; padding: 10px 20px; margin: 0; background: var(--color-almacen); color: white;" onclick="avisoFaltaProgramar()">+ Nueva Orden</button>
+                </div>
+
+                <div class="banner-produccion">
+                    <h3>👨‍🍳 El obrador está trabajando</h3>
+                    <p style="font-size: 12px; color: var(--texto-gris); margin-bottom: 5px;">Actualmente tienes 2 órdenes de producción procesándose en tiempo real.</p>
+                </div>
+
+                <div class="grid-produccion">
+                    <!-- Orden 1 -->
+                    <div class="card-prod-activa">
+                        <div class="prod-header">
+                            <div>
+                                <h4 style="color: var(--dorado);">Galletas de Coco</h4>
+                                <span>Orden #00124</span>
+                            </div>
+                            <span class="badge-completado" style="background: rgba(229,169,99,0.15); color: var(--dorado); border-color: rgba(229,169,99,0.3);">Horneando</span>
+                        </div>
+                        <div class="prod-detalles">
+                            <div><span>Operario:</span> <span>Juan Pérez</span></div>
+                            <div><span>Cantidad:</span> <span style="color: white;">200 unidades</span></div>
+                            <div><span>Horno:</span> <span>Horno 1 (180°C)</span></div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px; color:var(--texto-gris);">
+                                <span>Progreso estimado</span> <span>75%</span>
+                            </div>
+                            <div class="barra-progreso-bg"><div class="barra-progreso-fill" style="width: 75%;"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Orden 2 -->
+                    <div class="card-prod-activa">
+                        <div class="prod-header">
+                            <div>
+                                <h4 style="color: var(--dorado);">Achiras del Huila</h4>
+                                <span>Orden #00125</span>
+                            </div>
+                            <span class="badge-completado trabajando" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59,130,246,0.3);">Preparando masa</span>
+                        </div>
+                        <div class="prod-detalles">
+                            <div><span>Operario:</span> <span>Carlos Ruiz</span></div>
+                            <div><span>Cantidad:</span> <span style="color: white;">500 gramos</span></div>
+                            <div><span>Mesa:</span> <span>Mesa Central</span></div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px; color:var(--texto-gris);">
+                                <span>Progreso estimado</span> <span>20%</span>
+                            </div>
+                            <div class="barra-progreso-bg"><div class="barra-progreso-fill" style="width: 20%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> 
+
+    <!-- ============================================================
+         SCRIPTS JS — CADA LÍNEA COMENTADA
+         ============================================================ -->
+    <script> 
+        // ──────────────────────────────────────────────────────────
+        // VARIABLES DEL HISTORIAL DE NAVEGACIÓN
+        // ──────────────────────────────────────────────────────────
+        let historialPantallas = ['pantalla-inicio'];  // Array con la pantalla actual como inicio
+        let posicionHistorial = 0;                     // Índice de la pantalla actual dentro del array
+        let usandoFlechasNav = false;                  // Bandera para saber si navegamos con flechas
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: cambiarPantalla
+        // Recibe el id de la pantalla a mostrar y la activa.
+        // ──────────────────────────────────────────────────────────
+        function cambiarPantalla(idPantallaDestino) { 
+            let todasLasPantallas = document.querySelectorAll('.pantalla'); // Selecciona TODAS las pantallas
+            todasLasPantallas.forEach(function(pantalla) {                  // Recorre cada una
+                pantalla.classList.remove('activa');                        // Le quita la clase 'activa'
+            }); 
+
+            document.getElementById(idPantallaDestino).classList.add('activa'); // Activa solo la destino
+
+            document.getElementById('area-scroll').scrollTo(0, 0);          // Sube el scroll al inicio
+
+            if (!usandoFlechasNav) {                                        // Si NO venimos de las flechas
+                if (posicionHistorial < historialPantallas.length - 1) {    // Si hay pantallas adelante en el historial
+                    historialPantallas = historialPantallas.slice(0, posicionHistorial + 1); // Las borra
+                }
+                if (historialPantallas[historialPantallas.length - 1] !== idPantallaDestino) { // Si la última no es la destino
+                    historialPantallas.push(idPantallaDestino);              // La agrega al historial
+                    posicionHistorial++;                                     // Avanza el índice
+                }
+            }
+            usandoFlechasNav = false;                                        // Reinicia la bandera
+        } 
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: retrocederHistorial (botón ←)
+        // ──────────────────────────────────────────────────────────
+        function retrocederHistorial() {
+            if (posicionHistorial > 0) {                                     // Si hay pantalla anterior
+                posicionHistorial--;                                         // Retrocede el índice
+                usandoFlechasNav = true;                                     // Marca que navegamos con flechas
+                cambiarPantalla(historialPantallas[posicionHistorial]);      // Carga esa pantalla
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: avanzarHistorial (botón →)
+        // ──────────────────────────────────────────────────────────
+        function avanzarHistorial() {
+            if (posicionHistorial < historialPantallas.length - 1) {         // Si hay pantalla siguiente
+                posicionHistorial++;                                         // Avanza el índice
+                usandoFlechasNav = true;                                     // Marca navegación por flechas
+                cambiarPantalla(historialPantallas[posicionHistorial]);      // Carga la pantalla
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: simularIngreso
+        // Detecta el rol según el correo y navega a su panel.
+        // ──────────────────────────────────────────────────────────
+        function simularIngreso(tipoDeFormulario) {
+            document.getElementById('barra-navegacion').style.display = 'flex'; // Muestra la barra superior
+
+            let correoIngresado = tipoDeFormulario === 'general'             // Si es login general
+                ? document.getElementById('correo-general').value.toLowerCase() // Toma correo general (minúsculas)
+                : document.getElementById('correo-prov').value.toLowerCase();   // Si no, correo proveedor
+
+            if (correoIngresado.includes("admin")) {                         // ¿Contiene "admin"?
+                cambiarPantalla('pantalla-dashboard-admin');                 // → Dashboard administrador
+            } else if (correoIngresado.includes("almacen")) {                // ¿Contiene "almacen"?
+                cambiarPantalla('pantalla-inventario');                      // → Inventario
+            } else if (correoIngresado.includes("produccion")) {             // ¿Contiene "produccion"?
+                cambiarPantalla('pantalla-produccion');                      // → Producción
+            } else if (correoIngresado.includes("proveedor")) {              // ¿Contiene "proveedor"?
+                alert("⚠️ El panel del proveedor estará disponible pronto.");// Aviso
+                cambiarPantalla('pantalla-mantenimiento');                   // → Mantenimiento
+            } else {                                                         // Cualquier otro correo
+                alert("⚠️ Esta cuenta no tiene un panel asignado.");         // Aviso
+                cambiarPantalla('pantalla-mantenimiento');                   // → Mantenimiento
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: cerrarSesion (botón ×)
+        // ──────────────────────────────────────────────────────────
+        function cerrarSesion() {
+            document.getElementById('barra-navegacion').style.display = 'none'; // Oculta la barra superior
+            historialPantallas = ['pantalla-inicio'];                            // Reinicia el historial
+            posicionHistorial = 0;                                               // Reinicia el índice
+            cambiarPantalla('pantalla-inicio');                                  // Vuelve al inicio
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIONES DEL MENÚ ☰ (modal constelación)
+        // ──────────────────────────────────────────────────────────
+        function abrirMenu() {                                                   // Abre el modal
+            document.getElementById('modal-menu-nav').classList.add('abierto'); // Añade clase .abierto
+        }
+        function cerrarMenu() {                                                  // Cierra el modal
+            document.getElementById('modal-menu-nav').classList.remove('abierto'); // Quita la clase
+        }
+
+        function navegarDesdeMenu(idPantallaDestino) {                           // Navega desde un módulo del menú
+            cambiarPantalla(idPantallaDestino);                                  // Cambia la pantalla
+            cerrarMenu();                                                        // Y cierra el modal
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: guardarProducto
+        // ──────────────────────────────────────────────────────────
+        function guardarProducto() {
+            alert("¡Producto guardado exitosamente en el catálogo!");            // Muestra confirmación
+            cambiarPantalla('pantalla-productos-admin');                         // Vuelve al catálogo
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: avisoFaltaProgramar (aviso genérico)
+        // ──────────────────────────────────────────────────────────
+        function avisoFaltaProgramar() {
+            alert("⚠️ Falta programar esta función próximamente.");             // Muestra el aviso
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: previsualizarFoto
+        // Muestra la foto elegida en el formulario de producto.
+        // ──────────────────────────────────────────────────────────
+        function previsualizarFoto(inputElement) {
+            if (inputElement.files && inputElement.files[0]) {                   // Si hay archivo seleccionado
+                let lector = new FileReader();                                    // Crear lector de archivos
+                lector.onload = function(evento) {                                // Callback al terminar de leer
+                    let caja = document.getElementById('area-foto');              // Referencia a la caja
+                    let texto = document.getElementById('texto-foto');            // Referencia al texto
+                    caja.style.backgroundImage = "url('" + evento.target.result + "')"; // Pone la imagen de fondo
+                    caja.style.backgroundSize = "cover";                          // Ajusta el tamaño
+                    caja.style.backgroundPosition = "center";                     // Centra la imagen
+                    texto.style.display = "none";                                 // Oculta el texto placeholder
+                };
+                lector.readAsDataURL(inputElement.files[0]);                      // Lee el archivo como data URL
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        // FUNCIÓN: llenarDatos (autocompleta cuentas demo)
+        // ──────────────────────────────────────────────────────────
+        function llenarDatos(correo, clave, idCampoCorreo, idCampoClave) {
+            document.getElementById(idCampoCorreo).value = correo;               // Rellena el correo
+            document.getElementById(idCampoClave).value = clave;                 // Rellena la contraseña
+            document.getElementById(idCampoClave).focus();                       // Enfoca el campo clave
+        }
+    </script> 
+</body> 
+</html>
